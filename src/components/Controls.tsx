@@ -26,49 +26,49 @@ export function Controls({ siteId, date }: Props) {
   }
 
   return (
-    <div className="card p-3 sm:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center no-print">
+    <div className="card p-3.5 sm:p-4 flex flex-col sm:flex-row gap-3.5 items-stretch sm:items-center no-print">
       <div className="flex-1 min-w-0">
-        <label className="block text-[10px] uppercase tracking-wider font-semibold text-[var(--muted)] mb-1">
+        <label className="block text-[12px] sm:text-[10px] uppercase tracking-wider font-semibold text-[var(--muted)] mb-1.5 sm:mb-1">
           Factory
         </label>
         <div className="relative">
           <select
             value={siteId}
             onChange={(e) => update({ site: e.target.value })}
-            className="w-full appearance-none bg-white border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg pl-3 pr-9 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--foreground)]/10"
+            className="w-full appearance-none bg-white border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg pl-3.5 pr-10 py-3 sm:py-2.5 text-base sm:text-sm font-semibold sm:font-medium leading-snug focus:outline-none focus:ring-2 focus:ring-[var(--foreground)]/10"
           >
             {FACTORIES.map((f) => (
               <option key={f.site_id} value={f.site_id}>
-                {f.recording_name} · {f.team}
+                {f.recording_name}
               </option>
             ))}
           </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] text-xs">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)]/70 text-base sm:text-xs">
             ▾
           </span>
         </div>
       </div>
       <div className="sm:w-52">
-        <label className="block text-[10px] uppercase tracking-wider font-semibold text-[var(--muted)] mb-1">
+        <label className="block text-[12px] sm:text-[10px] uppercase tracking-wider font-semibold text-[var(--muted)] mb-1.5 sm:mb-1">
           Report date
         </label>
         <input
           type="date"
           value={date}
           onChange={(e) => update({ date: e.target.value })}
-          className="w-full bg-white border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--foreground)]/10"
+          className="w-full bg-white border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg px-3.5 py-3 sm:py-2.5 text-base sm:text-sm font-semibold sm:font-medium leading-snug focus:outline-none focus:ring-2 focus:ring-[var(--foreground)]/10"
         />
       </div>
       <div className="flex items-center gap-3 sm:pt-5">
-        <span className="text-[11px] text-[var(--muted)]">
+        <span className="text-[13px] sm:text-[11px] text-[var(--muted)] font-medium">
           {pending ? (
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse-soft" />
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-flex h-2 w-2 sm:h-1.5 sm:w-1.5 rounded-full bg-amber-500 animate-pulse-soft" />
               Loading…
             </span>
           ) : factory ? (
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-flex h-2 w-2 sm:h-1.5 sm:w-1.5 rounded-full bg-emerald-500" />
               {factory.worker_count} workers on roster
             </span>
           ) : null}
