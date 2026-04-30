@@ -5,6 +5,7 @@ import { EfficiencyHeatmap } from "@/components/EfficiencyHeatmap";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { HourlyEfficiencyChart } from "@/components/HourlyEfficiencyChart";
+import { HourlyTrendAreaChart } from "@/components/HourlyTrendAreaChart";
 import { KpiGrid } from "@/components/KpiGrid";
 import { PrintHeader } from "@/components/PrintHeader";
 import { TargetAttainmentCard } from "@/components/TargetAttainmentCard";
@@ -111,6 +112,12 @@ export default async function Page({
               </div>
               <div data-pdf-section>
                 <HourlyEfficiencyChart hours={report.hourly_activity} goodHours={report.good_hours} />
+              </div>
+              <div data-pdf-section>
+                <HourlyTrendAreaChart
+                  hours={report.hourly_activity}
+                  productivePct={report.quality_pct}
+                />
               </div>
             </section>
 

@@ -29,10 +29,10 @@ export function HourlyEfficiencyChart({ hours, goodHours }: Props) {
   );
   const data = hours.map((h) => ({
     hour: h.hour_label,
-    Productive: h.working_pct,
-    Idle: h.not_working_pct,
+    Working: h.working_pct,
+    "Not working": h.not_working_pct,
     "Device off": h.device_off_pct,
-    Productivity: h.working_pct,
+    "Working %": h.working_pct,
   }));
 
   return (
@@ -43,20 +43,20 @@ export function HourlyEfficiencyChart({ hours, goodHours }: Props) {
             Hourly efficiency
           </div>
           <div className="text-xs text-[var(--muted)] mt-0.5">
-            Productive / idle / device-off share of each hour, across the workforce
+            Working / not working / device-off share of each hour, across the workforce
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[var(--muted)]">
-          <Legend dot="var(--good)" label="Productive" />
-          <Legend dot="var(--bad)" label="Idle" />
+          <Legend dot="var(--good)" label="Working" />
+          <Legend dot="var(--bad)" label="Not working" />
           <Legend dot="var(--off)" label="Device off" />
-          <Legend dot="var(--accent)" label="Productivity" line />
+          <Legend dot="var(--accent)" label="Working %" line />
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-3 mb-3">
-        <Stat label="Best hour" value={peakHour.hour_label} sub={`${peakHour.working_pct.toFixed(0)}% productive`} color="var(--good)" />
-        <Stat label="Weakest hour" value={trough.hour_label} sub={`${trough.working_pct.toFixed(0)}% productive`} color="var(--bad)" />
+        <Stat label="Best hour" value={peakHour.hour_label} sub={`${peakHour.working_pct.toFixed(0)}% working`} color="var(--good)" />
+        <Stat label="Weakest hour" value={trough.hour_label} sub={`${trough.working_pct.toFixed(0)}% working`} color="var(--bad)" />
         <Stat label="Total productive" value={`${goodHours.toFixed(1)}h`} sub="Worker-hours today" color="var(--info)" />
       </div>
 
@@ -100,12 +100,12 @@ export function HourlyEfficiencyChart({ hours, goodHours }: Props) {
               }}
               formatter={(v) => `${Number(v).toFixed(1)}%`}
             />
-            <Bar yAxisId="pct" dataKey="Productive" stackId="a" fill="url(#workingGrad)" />
-            <Bar yAxisId="pct" dataKey="Idle" stackId="a" fill="var(--bad)" />
+            <Bar yAxisId="pct" dataKey="Working" stackId="a" fill="url(#workingGrad)" />
+            <Bar yAxisId="pct" dataKey="Not working" stackId="a" fill="var(--bad)" />
             <Bar yAxisId="pct" dataKey="Device off" stackId="a" fill="var(--off)" radius={[8, 8, 0, 0]} />
             <Line
               yAxisId="pct"
-              dataKey="Productivity"
+              dataKey="Working %"
               type="monotone"
               stroke="var(--accent)"
               strokeWidth={2.5}
