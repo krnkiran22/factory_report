@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Factory Efficiency Report (standalone demo)
 
-## Getting Started
+A standalone Next.js + TypeScript dashboard that visualizes per-factory
+efficiency for the Build AI ingestion platform — using **dummy data only**.
 
-First, run the development server:
+The metric names and calculation rules mirror the real backend at
+`core/dal/product/report_v1` so this UI can later be pointed at the live
+API by swapping the data source in `src/lib/dummy-data.ts`.
+
+## What it shows
+
+For a selected **factory** and **date** you get:
+
+- **Headline KPIs**: efficiency %, good hours, idle/bad hours, workers,
+  devices, SD card counts, coverage %.
+- **Hourly efficiency chart** — stacked working / idle / device-off
+  percentages across the 10-hour shift (mirrors `build_shift_activity`
+  in `core/dal/product/report_v1/_timeline.py`).
+- **Clips per hour** — total uploaded vs usable clips per hour.
+- **SD card inventory** — good / empty / bad / claimed / actually-returned.
+- **7-day trend** — daily good vs bad hours and efficiency line.
+- **Worker leaderboard** — sorted by productivity %, mirrors
+  `productivity_pct_from_usable_clips` in `_helpers.py`
+  (`usable_clips × 0.05h / 10h × 100`).
+
+## Metric definitions used
+
+| Metric | Formula | Source in repo |
+|---|---|---|
+| `good_hours` | `usable_duration_sec / 3600` | `migrations/654_*.sql` |
+| `bad_hours` | `max(recorded_hours − good_hours, 0)` | `report_v1/site.py` |
+| `quality_pct` (efficiency) | `good_hours_per_participant / 10 × 100` | `report_v1/_payload.py` |
+| `productivity_pct` (worker) | `usable_clips × 0.05 / 10 × 100` | `report_v1/_helpers.py` |
+| `coverage_pct` | `evaluated_count / clip_count × 100` | `migrations/654_*.sql` |
+| `total_sd_card_count` | `good + bad + empty` | `core/dal/product/dashboard.py` |
+| Hourly bucket % | `working / not_working / device_off` per hour slot | `_timeline.build_shift_activity` |
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd ~/Desktop/factory-report
+bun install   # already done by the scaffold
+bun run dev
+# open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Change factory/date via the controls at the top — URL syncs as
+`?site=fac-...&date=YYYY-MM-DD` so the report is shareable.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Switching to real data later
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Replace `getFactoryDayReport(siteId, isoDate)` in
+`src/lib/dummy-data.ts` with a fetch to:
 
-## Learn More
+```
+GET /v1/product/reports/sites/{site_id}/aggregate
+GET /v1/dashboard/recordings/detail   (for the factory list)
+```
 
-To learn more about Next.js, take a look at the following resources:
+The TypeScript shapes in `src/lib/types.ts` already match the API
+response keys.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16 (App Router, Turbopack) + TypeScript
+- Tailwind CSS v4
+- Recharts for charts
+- date-fns for date math
+- Bun for install + dev
