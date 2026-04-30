@@ -15,7 +15,7 @@ export function PrintHeader({ factory, report, comparison }: Props) {
   const generatedAt = format(new Date(), "dd MMM yyyy · HH:mm");
 
   return (
-    <div className="hidden print:block mb-6">
+    <div className="print-only mb-6">
       <div className="flex items-start justify-between border-b-2 border-black/80 pb-3">
         <div>
           <div className="text-[10px] uppercase tracking-[0.2em] text-black/60 font-semibold">

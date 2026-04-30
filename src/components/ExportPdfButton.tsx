@@ -45,9 +45,13 @@ export function ExportPdfButton({ factoryName, date }: Props) {
       const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
       let cursorMm = MARGIN_MM;
       let firstPage = true;
+      let placedAnything = false;
 
       for (let i = 0; i < sections.length; i++) {
         const el = sections[i];
+        const rect = el.getBoundingClientRect();
+        if (rect.width <= 1 || rect.height <= 1) continue;
+
         const canvas = await html2canvas(el, {
           scale: 2,
           backgroundColor: "#ffffff",
@@ -55,53 +59,59 @@ export function ExportPdfButton({ factoryName, date }: Props) {
           logging: false,
           windowWidth: Math.max(1280, document.documentElement.scrollWidth),
         });
-        const ratio = canvas.height / canvas.width;
-        const wMm = CONTENT_W_MM;
-        const hMm = wMm * ratio;
-        const fitsOnPage = cursorMm + hMm <= MARGIN_MM + CONTENT_H_MM;
+        if (!canvas || !canvas.width || !canvas.height) continue;
 
+        const wMm = CONTENT_W_MM;
+        const hMm = (canvas.height * wMm) / canvas.width;
+        if (!Number.isFinite(hMm) || hMm <= 0) continue;
+
+        if (hMm > CONTENT_H_MM) {
+          if (placedAnything) pdf.addPage();
+          firstPage = false;
+          placedAnything = true;
+          const slices = Math.ceil(hMm / CONTENT_H_MM);
+          const sliceHeightPx = Math.floor(canvas.height / slices);
+          for (let s = 0; s < slices; s++) {
+            if (s > 0) pdf.addPage();
+            const sliceCanvas = document.createElement("canvas");
+            sliceCanvas.width = canvas.width;
+            sliceCanvas.height = sliceHeightPx;
+            const ctx = sliceCanvas.getContext("2d");
+            if (!ctx) continue;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+            ctx.drawImage(
+              canvas,
+              0,
+              s * sliceHeightPx,
+              canvas.width,
+              sliceHeightPx,
+              0,
+              0,
+              canvas.width,
+              sliceHeightPx,
+            );
+            const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
+            pdf.addImage(
+              sliceData,
+              "JPEG",
+              MARGIN_MM,
+              MARGIN_MM,
+              wMm,
+              CONTENT_H_MM,
+              undefined,
+              "FAST",
+            );
+          }
+          cursorMm = MARGIN_MM + CONTENT_H_MM;
+          continue;
+        }
+
+        const fitsOnPage = cursorMm + hMm <= MARGIN_MM + CONTENT_H_MM;
         if (!fitsOnPage) {
-          if (!firstPage) pdf.addPage();
+          if (placedAnything) pdf.addPage();
           firstPage = false;
           cursorMm = MARGIN_MM;
-          if (hMm > CONTENT_H_MM) {
-            const slices = Math.ceil(hMm / CONTENT_H_MM);
-            const sliceHeightPx = canvas.height / slices;
-            for (let s = 0; s < slices; s++) {
-              if (s > 0) pdf.addPage();
-              const sliceCanvas = document.createElement("canvas");
-              sliceCanvas.width = canvas.width;
-              sliceCanvas.height = sliceHeightPx;
-              const ctx = sliceCanvas.getContext("2d");
-              if (!ctx) continue;
-              ctx.fillStyle = "#ffffff";
-              ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-              ctx.drawImage(
-                canvas,
-                0,
-                s * sliceHeightPx,
-                canvas.width,
-                sliceHeightPx,
-                0,
-                0,
-                canvas.width,
-                sliceHeightPx,
-              );
-              const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
-              pdf.addImage(
-                sliceData,
-                "JPEG",
-                MARGIN_MM,
-                MARGIN_MM,
-                wMm,
-                CONTENT_H_MM,
-                undefined,
-                "FAST",
-              );
-            }
-            cursorMm = MARGIN_MM + CONTENT_H_MM;
-            continue;
-          }
         } else if (firstPage) {
           firstPage = false;
         }
@@ -118,6 +128,11 @@ export function ExportPdfButton({ factoryName, date }: Props) {
           "FAST",
         );
         cursorMm += hMm + SECTION_GAP_MM;
+        placedAnything = true;
+      }
+
+      if (!placedAnything) {
+        throw new Error("Nothing to capture — check that #print-root has visible content.");
       }
 
       const pageCount = pdf.getNumberOfPages();
