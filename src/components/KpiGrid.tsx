@@ -1,83 +1,110 @@
-import type { FactoryDayReport } from "@/lib/types";
-import { efficiencyTier, fmtHours, fmtInt, fmtPct } from "@/lib/format";
+import type { FactoryDayReport, KpiBundle } from "@/lib/types";
+import { fmtHours, fmtInt, fmtPct } from "@/lib/format";
+import { DeltaChip } from "@/components/ui/DeltaChip";
+import { Sparkline } from "@/components/ui/Sparkline";
 
-type Props = { report: FactoryDayReport };
+type Props = { report: FactoryDayReport; kpis: KpiBundle };
 
-export function KpiGrid({ report }: Props) {
-  /** Headline tiles in the order a factory operator scans first:
-   * efficiency, good vs bad hours, then capacity (workers, devices, cards). */
-  const tier = efficiencyTier(report.quality_pct);
-  const tiles: Array<{
-    label: string;
-    value: string;
-    sub?: string;
-    tone?: "good" | "bad" | "neutral";
-    pill?: string;
-  }> = [
+type Tile = {
+  label: string;
+  value: string;
+  sub?: string;
+  delta_pct: number;
+  inverted?: boolean;
+  spark: { date: string; value: number }[];
+  sparkColor: string;
+  icon: string;
+};
+
+export function KpiGrid({ report, kpis }: Props) {
+  /** Headline KPIs with 7-day sparkline + day-over-day delta chip per tile. */
+  const tiles: Tile[] = [
     {
       label: "Efficiency",
-      value: fmtPct(report.quality_pct),
-      sub: `${fmtHours(report.good_hours_per_participant)} per worker · 10h shift`,
-      tone: "good",
-      pill: tier.label,
+      value: fmtPct(kpis.efficiency.current),
+      sub: `${fmtHours(report.good_hours_per_participant)} / worker · 10h shift`,
+      delta_pct: kpis.efficiency.delta_pct,
+      spark: kpis.efficiency.spark,
+      sparkColor: "var(--good)",
+      icon: "◎",
     },
     {
       label: "Good hours",
-      value: fmtHours(report.good_hours),
+      value: fmtHours(kpis.good_hours.current),
       sub: `${fmtInt(report.usable_clip_count)} usable clips`,
-      tone: "good",
+      delta_pct: kpis.good_hours.delta_pct,
+      spark: kpis.good_hours.spark,
+      sparkColor: "var(--good)",
+      icon: "▲",
     },
     {
       label: "Idle / bad hours",
-      value: fmtHours(report.bad_hours),
+      value: fmtHours(kpis.bad_hours.current),
       sub: `Recorded ${fmtHours(report.recorded_hours)} total`,
-      tone: "bad",
+      delta_pct: kpis.bad_hours.delta_pct,
+      inverted: true,
+      spark: kpis.bad_hours.spark,
+      sparkColor: "var(--bad)",
+      icon: "▼",
     },
     {
-      label: "Workers on shift",
-      value: fmtInt(report.participant_count),
+      label: "Workers",
+      value: fmtInt(kpis.workers.current),
       sub: `${fmtInt(report.device_count)} devices active`,
-      tone: "neutral",
+      delta_pct: kpis.workers.delta_pct,
+      spark: kpis.workers.spark,
+      sparkColor: "var(--info)",
+      icon: "◉",
     },
     {
       label: "SD cards",
-      value: fmtInt(report.total_sd_card_count),
-      sub: `${fmtInt(report.card_inventory.good_card_count)} good · ${fmtInt(report.card_inventory.bad_card_count)} bad · ${fmtInt(report.card_inventory.empty_card_count)} empty`,
-      tone: "neutral",
+      value: fmtInt(kpis.sd_cards.current),
+      sub: `${fmtInt(report.card_inventory.good_card_count)} good · ${fmtInt(report.card_inventory.bad_card_count)} bad`,
+      delta_pct: kpis.sd_cards.delta_pct,
+      spark: kpis.sd_cards.spark,
+      sparkColor: "var(--violet)",
+      icon: "▣",
     },
     {
       label: "Coverage",
-      value: fmtPct(report.coverage_pct),
-      sub: `${fmtInt(report.evaluated_count)} of ${fmtInt(report.clip_count)} clips evaluated`,
-      tone: "neutral",
+      value: fmtPct(kpis.coverage.current),
+      sub: `${fmtInt(report.evaluated_count)} of ${fmtInt(report.clip_count)} evaluated`,
+      delta_pct: kpis.coverage.delta_pct,
+      spark: kpis.coverage.spark,
+      sparkColor: "var(--amber)",
+      icon: "◧",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {tiles.map((t, i) => (
-        <div key={i} className="card p-4">
+        <div
+          key={i}
+          className="card p-4 hover:shadow-md transition-shadow flex flex-col"
+        >
           <div className="flex items-center justify-between">
-            <div className="text-[11px] uppercase tracking-wide text-[var(--muted)]">
-              {t.label}
-            </div>
-            {t.pill && (
-              <span
-                className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: tier.bg, color: tier.color }}
-              >
-                {t.pill}
+            <div className="flex items-center gap-1.5 text-[var(--muted)]">
+              <span className="text-sm leading-none" style={{ color: t.sparkColor }}>
+                {t.icon}
               </span>
-            )}
+              <span className="text-[10px] uppercase tracking-wider font-semibold">
+                {t.label}
+              </span>
+            </div>
+            <DeltaChip delta={t.delta_pct} inverted={t.inverted} />
           </div>
-          <div className="kpi-value mt-1.5 text-2xl font-semibold tracking-tight">
+          <div className="kpi-value mt-2 text-2xl font-semibold tracking-tight">
             {t.value}
           </div>
           {t.sub && (
-            <div className="text-xs text-[var(--muted)] mt-1 leading-snug">
+            <div className="text-[11px] text-[var(--muted)] mt-1 leading-snug line-clamp-2">
               {t.sub}
             </div>
           )}
+          <div className="mt-2 -mx-1">
+            <Sparkline points={t.spark} color={t.sparkColor} height={32} />
+          </div>
         </div>
       ))}
     </div>

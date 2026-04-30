@@ -3,10 +3,16 @@ import type {
   CardInventory,
   DailyTrendPoint,
   FactoryDayReport,
+  HeatmapCell,
   HourBucket,
+  KpiBundle,
+  KpiDelta,
+  NetworkComparison,
+  ShiftRhythm,
   Worker,
+  WorkerHistogramBucket,
 } from "./types";
-import { getFactory } from "./factories";
+import { FACTORIES, getFactory } from "./factories";
 
 /**
  * Deterministic dummy data generator. Same (site_id, date) always returns
@@ -198,5 +204,135 @@ export function getDailyTrend(siteId: string, anchorIso: string, days = 7): Dail
     });
   }
   return out;
+}
+
+function buildKpiDelta(
+  siteId: string,
+  anchorIso: string,
+  days: number,
+  pick: (r: FactoryDayReport) => number,
+): KpiDelta {
+  const anchor = parseISO(anchorIso);
+  const spark = [];
+  for (let d = days - 1; d >= 0; d--) {
+    const iso = format(subDays(anchor, d), "yyyy-MM-dd");
+    const r = getFactoryDayReport(siteId, iso);
+    if (!r) continue;
+    spark.push({ date: iso, value: round2(pick(r)) });
+  }
+  const current = spark.length ? spark[spark.length - 1].value : 0;
+  const previous = spark.length > 1 ? spark[spark.length - 2].value : current;
+  const delta_pct =
+    previous > 0 ? round2(((current - previous) / previous) * 100) : 0;
+  return { current, previous, delta_pct, spark };
+}
+
+export function getKpiBundle(siteId: string, anchorIso: string, days = 7): KpiBundle {
+  /** All KPIs for the headline strip with 7-day sparkline + day-over-day delta. */
+  return {
+    efficiency: buildKpiDelta(siteId, anchorIso, days, (r) => r.quality_pct),
+    good_hours: buildKpiDelta(siteId, anchorIso, days, (r) => r.good_hours),
+    bad_hours: buildKpiDelta(siteId, anchorIso, days, (r) => r.bad_hours),
+    workers: buildKpiDelta(siteId, anchorIso, days, (r) => r.participant_count),
+    devices: buildKpiDelta(siteId, anchorIso, days, (r) => r.device_count),
+    sd_cards: buildKpiDelta(siteId, anchorIso, days, (r) => r.total_sd_card_count),
+    coverage: buildKpiDelta(siteId, anchorIso, days, (r) => r.coverage_pct),
+    clips: buildKpiDelta(siteId, anchorIso, days, (r) => r.usable_clip_count),
+  };
+}
+
+export function getEfficiencyHeatmap(
+  siteId: string,
+  anchorIso: string,
+  days = 35,
+): HeatmapCell[] {
+  /** N-day per-day efficiency cells for a calendar heatmap. */
+  const anchor = parseISO(anchorIso);
+  const cells: HeatmapCell[] = [];
+  for (let d = days - 1; d >= 0; d--) {
+    const iso = format(subDays(anchor, d), "yyyy-MM-dd");
+    const r = getFactoryDayReport(siteId, iso);
+    if (!r) continue;
+    cells.push({
+      date: iso,
+      efficiency_pct: r.quality_pct,
+      good_hours: r.good_hours,
+    });
+  }
+  return cells;
+}
+
+export function getWorkerHistogram(
+  workers: Worker[],
+): WorkerHistogramBucket[] {
+  /** Bucket workers by productivity %. Used in the histogram chart. */
+  const buckets: WorkerHistogramBucket[] = [
+    { label: "0–20%", range: [0, 20], count: 0, fill: "var(--bad)" },
+    { label: "20–40%", range: [20, 40], count: 0, fill: "#fb923c" },
+    { label: "40–60%", range: [40, 60], count: 0, fill: "var(--warn)" },
+    { label: "60–80%", range: [60, 80], count: 0, fill: "#84cc16" },
+    { label: "80–100%", range: [80, 100], count: 0, fill: "var(--good)" },
+  ];
+  for (const w of workers) {
+    for (const b of buckets) {
+      if (w.productivity_pct >= b.range[0] && w.productivity_pct < b.range[1] + (b.range[1] === 100 ? 0.01 : 0)) {
+        b.count += 1;
+        break;
+      }
+    }
+  }
+  return buckets;
+}
+
+export function getNetworkComparison(
+  siteId: string,
+  isoDate: string,
+): NetworkComparison {
+  /** Compares this factory's day to the network average and finds its rank. */
+  const factoryReport = getFactoryDayReport(siteId, isoDate);
+  const factoryEff = factoryReport?.quality_pct ?? 0;
+  const factoryGoodPerWorker = factoryReport?.good_hours_per_participant ?? 0;
+  const all = FACTORIES.map((f) => {
+    const r = getFactoryDayReport(f.site_id, isoDate);
+    return {
+      site_id: f.site_id,
+      eff: r?.quality_pct ?? 0,
+      gpw: r?.good_hours_per_participant ?? 0,
+    };
+  });
+  const sortedEff = [...all].sort((a, b) => b.eff - a.eff);
+  const rank = sortedEff.findIndex((x) => x.site_id === siteId) + 1;
+  const networkAvg =
+    all.reduce((s, x) => s + x.eff, 0) / Math.max(1, all.length);
+  const topEff = sortedEff[0]?.eff ?? 0;
+  const networkAvgGpw =
+    all.reduce((s, x) => s + x.gpw, 0) / Math.max(1, all.length);
+  return {
+    factory_efficiency_pct: round2(factoryEff),
+    network_avg_efficiency_pct: round2(networkAvg),
+    network_top_efficiency_pct: round2(topEff),
+    rank,
+    total: all.length,
+    factory_good_hours_per_worker: round2(factoryGoodPerWorker),
+    network_avg_good_hours_per_worker: round2(networkAvgGpw),
+  };
+}
+
+export function getShiftRhythm(now = new Date()): ShiftRhythm {
+  /** Models a 10h shift starting 08:00 local, 0..600 minute completion. */
+  const shiftStart = new Date(now);
+  shiftStart.setHours(8, 0, 0, 0);
+  const shiftMinutesTotal = 10 * 60;
+  const elapsedRaw = (now.getTime() - shiftStart.getTime()) / 60000;
+  const elapsed = Math.max(0, Math.min(shiftMinutesTotal, elapsedRaw));
+  const remaining = shiftMinutesTotal - elapsed;
+  return {
+    shift_minutes_total: shiftMinutesTotal,
+    shift_minutes_elapsed: round2(elapsed),
+    shift_minutes_remaining: round2(remaining),
+    hours_completed: round2(elapsed / 60),
+    hours_remaining: round2(remaining / 60),
+    pct_complete: round2((elapsed / shiftMinutesTotal) * 100),
+  };
 }
 

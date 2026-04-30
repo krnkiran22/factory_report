@@ -10,12 +10,21 @@ import {
   YAxis,
 } from "recharts";
 import type { HourBucket } from "@/lib/types";
+import { fmtInt } from "@/lib/format";
 
 type Props = { hours: HourBucket[] };
 
 export function HourlyClipsChart({ hours }: Props) {
-  /** Total vs usable clips uploaded each hour — gives a feel for production rhythm
-   * and highlights the gap (rejected/non-usable clips) per hour. */
+  /** Total vs usable clips per hour with totals strip on top. */
+  const totals = hours.reduce(
+    (acc, h) => {
+      acc.total += h.clip_count;
+      acc.usable += h.usable_clip_count;
+      return acc;
+    },
+    { total: 0, usable: 0 },
+  );
+  const yieldPct = totals.total > 0 ? (totals.usable / totals.total) * 100 : 0;
   const data = hours.map((h) => ({
     hour: h.hour_label,
     Total: h.clip_count,
@@ -23,26 +32,27 @@ export function HourlyClipsChart({ hours }: Props) {
   }));
 
   return (
-    <div className="card p-5">
-      <div className="flex items-start justify-between mb-4">
+    <div className="card p-5 h-full">
+      <div className="flex items-start justify-between flex-wrap gap-2">
         <div>
           <div className="text-sm font-semibold tracking-tight">
             Clips per hour
           </div>
           <div className="text-xs text-[var(--muted)] mt-0.5">
-            Total uploaded vs usable (passed quality checks)
+            Total uploaded vs passed quality
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-          <span className="flex items-center gap-1.5">
-            <span className="dot" style={{ background: "var(--info)" }} /> Total
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="dot" style={{ background: "var(--good)" }} /> Usable
-          </span>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <Pill label="Total" value={fmtInt(totals.total)} color="var(--info)" />
+          <Pill label="Usable" value={fmtInt(totals.usable)} color="var(--good)" />
+          <Pill
+            label="Yield"
+            value={`${yieldPct.toFixed(0)}%`}
+            color="var(--accent)"
+          />
         </div>
       </div>
-      <div className="h-64">
+      <div className="h-48 mt-3">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
             <defs>
@@ -55,7 +65,7 @@ export function HourlyClipsChart({ hours }: Props) {
                 <stop offset="100%" stopColor="var(--good)" stopOpacity={0.04} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#eee" vertical={false} />
+            <CartesianGrid stroke="#eef0eb" vertical={false} />
             <XAxis
               dataKey="hour"
               stroke="#9a9a9a"
@@ -74,7 +84,8 @@ export function HourlyClipsChart({ hours }: Props) {
               contentStyle={{
                 background: "#fff",
                 border: "1px solid var(--border)",
-                borderRadius: 10,
+                borderRadius: 12,
+                boxShadow: "var(--shadow-md)",
                 fontSize: 12,
               }}
             />
@@ -95,6 +106,17 @@ export function HourlyClipsChart({ hours }: Props) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+    </div>
+  );
+}
+
+function Pill({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-1.5">
+      <div className="text-[9px] uppercase tracking-wider text-[var(--muted)] flex items-center justify-center gap-1">
+        <span className="dot" style={{ background: color }} /> {label}
+      </div>
+      <div className="kpi-value text-sm font-semibold mt-0.5">{value}</div>
     </div>
   );
 }

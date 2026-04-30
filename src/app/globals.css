@@ -1,18 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f7f5;
+  --background: #f8f8f6;
+  --background-grad-1: #f3f4f1;
+  --background-grad-2: #ffffff;
   --surface: #ffffff;
-  --surface-muted: #f1f1ee;
-  --border: #e7e5df;
-  --foreground: #1a1a1a;
-  --muted: #6b6b6b;
-  --accent: #111111;
+  --surface-2: #fbfbfa;
+  --surface-muted: #f3f3f0;
+  --surface-elevated: #ffffff;
+  --border: #e9e7e1;
+  --border-strong: #d9d6cd;
+  --foreground: #0d0d0c;
+  --muted: #6c6a64;
+  --muted-2: #8d8b85;
+  --accent: #0d0d0c;
   --good: #16a34a;
+  --good-soft: #dcfce7;
+  --good-ink: #14532d;
   --bad: #dc2626;
+  --bad-soft: #fee2e2;
+  --bad-ink: #7f1d1d;
   --off: #94a3b8;
+  --off-soft: #e2e8f0;
   --warn: #d97706;
+  --warn-soft: #fef3c7;
   --info: #2563eb;
+  --info-soft: #dbeafe;
+  --violet: #7c3aed;
+  --violet-soft: #ede9fe;
+  --amber: #f59e0b;
+  --shadow-sm: 0 1px 2px rgba(15, 15, 13, 0.04);
+  --shadow-md: 0 4px 16px -4px rgba(15, 15, 13, 0.06), 0 2px 4px rgba(15, 15, 13, 0.03);
+  --shadow-lg: 0 12px 32px -8px rgba(15, 15, 13, 0.10), 0 2px 8px rgba(15, 15, 13, 0.04);
 }
 
 @theme inline {
@@ -36,10 +55,18 @@ html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  font-feature-settings: "ss01", "cv11";
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-feature-settings: "ss01", "cv11", "cv02";
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 0% -10%, rgba(124, 58, 237, 0.05), transparent 60%),
+    radial-gradient(1000px 500px at 100% -10%, rgba(37, 99, 235, 0.04), transparent 60%);
+  background-attachment: fixed;
 }
 
 * {
@@ -49,12 +76,30 @@ body {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-elevated {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.card-hero {
+  background:
+    radial-gradient(800px 300px at 100% 0%, rgba(22, 163, 74, 0.06), transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #fafaf8 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
 }
 
 .kpi-value {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  font-feature-settings: "ss01", "cv11";
 }
 
 .dot {
@@ -62,4 +107,52 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 999px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.divider-y > * + * {
+  border-top: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.scroll-thin::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.04) 0%,
+    rgba(0,0,0,0.08) 50%,
+    rgba(0,0,0,0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
 }
