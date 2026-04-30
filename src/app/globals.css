@@ -51,6 +51,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  /* `clip` prevents horizontal overflow without creating a scroll container
+   * (unlike `hidden`, which establishes one). With `hidden` set on both
+   * <html> and <body>, the two competing scroll containers swallow wheel /
+   * trackpad events so the page only scrolls when the user drags the
+   * scrollbar handle directly. `clip` keeps native vertical scroll intact. */
+  overflow-x: clip;
+}
+
 html,
 body {
   background: var(--background);
@@ -62,19 +71,21 @@ body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   letter-spacing: -0.01em;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
 }
 
 body {
   background-image:
     radial-gradient(1200px 600px at 0% -10%, rgba(124, 58, 237, 0.05), transparent 60%),
     radial-gradient(1000px 500px at 100% -10%, rgba(37, 99, 235, 0.04), transparent 60%);
-  background-attachment: fixed;
+  /* No background-attachment: fixed — it causes severe scroll jank on long
+   * pages in Chrome/Safari and combined with overscroll rules can lock the
+   * viewport in unpredictable ways. */
   min-height: 100vh;
   min-height: 100dvh;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+  overflow-x: clip;
+  overscroll-behavior-y: none;
 }
 
 * {
