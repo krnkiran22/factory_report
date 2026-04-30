@@ -20,11 +20,12 @@ function avatarColor(seed: string): string {
 }
 
 export function WorkersTable({ workers }: Props) {
-  /** Top-N workers sorted by productivity_pct, with avatar, productivity bar,
-   * and quality micro-bar. Mirrors `_helpers.productivity_pct_from_usable_clips`. */
+  /** Top-N workers sorted by productivity_pct. Mobile hides the device,
+   * usable/total clip and quality columns to keep the most important info
+   * (name + good hours + productivity) readable on a phone screen. */
   return (
     <div className="card overflow-hidden">
-      <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-2">
+      <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-2">
         <div>
           <div className="text-sm font-semibold tracking-tight">
             Worker leaderboard
@@ -33,7 +34,7 @@ export function WorkersTable({ workers }: Props) {
             Productivity = good hours / 10h shift · usable clips × 0.05h each
           </div>
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-[var(--muted)]">
+        <div className="hidden sm:flex items-center gap-3 text-[11px] text-[var(--muted)]">
           <span className="flex items-center gap-1.5">
             <span className="dot" style={{ background: "var(--good)" }} /> ≥70% excellent
           </span>
@@ -49,13 +50,21 @@ export function WorkersTable({ workers }: Props) {
         <table className="w-full text-sm">
           <thead className="bg-[var(--surface-muted)] text-[10px] uppercase tracking-wider text-[var(--muted)]">
             <tr>
-              <th className="text-left font-semibold px-5 py-2.5 w-10">#</th>
+              <th className="text-left font-semibold px-3 sm:px-5 py-2.5 w-10">#</th>
               <th className="text-left font-semibold px-3 py-2.5">Worker</th>
-              <th className="text-left font-semibold px-3 py-2.5">Device</th>
-              <th className="text-right font-semibold px-3 py-2.5">Usable / Total</th>
-              <th className="text-right font-semibold px-3 py-2.5">Good hrs</th>
-              <th className="text-left font-semibold px-3 py-2.5 w-[18%]">Quality</th>
-              <th className="text-left font-semibold px-5 py-2.5 w-[26%]">Productivity</th>
+              <th className="hidden md:table-cell text-left font-semibold px-3 py-2.5">
+                Device
+              </th>
+              <th className="hidden sm:table-cell text-right font-semibold px-3 py-2.5">
+                Usable / Total
+              </th>
+              <th className="text-right font-semibold px-3 py-2.5">Hrs</th>
+              <th className="hidden md:table-cell text-left font-semibold px-3 py-2.5 w-[18%]">
+                Quality
+              </th>
+              <th className="text-left font-semibold px-3 sm:px-5 py-2.5 w-[36%] sm:w-[26%]">
+                Productivity
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -64,30 +73,32 @@ export function WorkersTable({ workers }: Props) {
                 key={w.worker_id}
                 className="border-t border-[var(--border)] hover:bg-[var(--surface-muted)]/50 transition-colors"
               >
-                <td className="px-5 py-2.5 text-[var(--muted)] tabular text-xs">
+                <td className="px-3 sm:px-5 py-2.5 text-[var(--muted)] tabular text-xs">
                   {String(i + 1).padStart(2, "0")}
                 </td>
-                <td className="px-3 py-2.5">
-                  <div className="flex items-center gap-2.5">
+                <td className="px-3 py-2.5 min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-2.5">
                     <div
-                      className="h-7 w-7 rounded-full grid place-items-center text-[10px] font-semibold text-[var(--foreground)]"
+                      className="h-7 w-7 rounded-full grid place-items-center text-[10px] font-semibold text-[var(--foreground)] shrink-0"
                       style={{ background: avatarColor(w.worker_id) }}
                     >
                       {w.display_name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                     </div>
-                    <span className="font-medium">{w.display_name}</span>
+                    <span className="font-medium truncate text-[13px] sm:text-sm">
+                      {w.display_name}
+                    </span>
                   </div>
                 </td>
-                <td className="px-3 py-2.5 text-[var(--muted)] font-mono text-xs">
+                <td className="hidden md:table-cell px-3 py-2.5 text-[var(--muted)] font-mono text-xs">
                   {w.device_id}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular">
+                <td className="hidden sm:table-cell px-3 py-2.5 text-right tabular">
                   {fmtInt(w.usable_clip_count)} / {fmtInt(w.total_clip_count)}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular">
+                <td className="px-3 py-2.5 text-right tabular text-[13px]">
                   {fmtHours(w.good_hours)}
                 </td>
-                <td className="px-3 py-2.5">
+                <td className="hidden md:table-cell px-3 py-2.5">
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-1 rounded-full bg-[var(--surface-muted)] overflow-hidden">
                       <div
@@ -103,8 +114,8 @@ export function WorkersTable({ workers }: Props) {
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-2.5">
-                  <div className="flex items-center gap-3">
+                <td className="px-3 sm:px-5 py-2.5">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="flex-1 h-1.5 rounded-full bg-[var(--surface-muted)] overflow-hidden">
                       <div
                         className="h-full rounded-full"
@@ -119,7 +130,7 @@ export function WorkersTable({ workers }: Props) {
                         }}
                       />
                     </div>
-                    <div className="text-xs tabular w-12 text-right font-semibold">
+                    <div className="text-[11px] sm:text-xs tabular w-10 sm:w-12 text-right font-semibold">
                       {fmtPct(w.productivity_pct)}
                     </div>
                   </div>

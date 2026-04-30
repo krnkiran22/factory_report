@@ -18,7 +18,7 @@ export function ShiftRhythmGauge({ rhythm }: Props) {
     { name: "v", value: rhythm.pct_complete, fill: "var(--info)" },
   ];
   return (
-    <div className="card p-5 h-full flex flex-col">
+    <div className="card p-4 sm:p-5 h-full flex flex-col">
       <div className="text-sm font-semibold tracking-tight">Shift rhythm</div>
       <div className="text-xs text-[var(--muted)] mt-0.5">
         10-hour shift progress · 08:00 → 18:00

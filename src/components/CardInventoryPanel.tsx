@@ -23,7 +23,7 @@ export function CardInventoryPanel({ inventory, deviceCount }: Props) {
       : 0;
 
   return (
-    <div className="card p-5 h-full flex flex-col">
+    <div className="card p-4 sm:p-5 h-full flex flex-col">
       <div className="text-sm font-semibold tracking-tight">SD card health</div>
       <div className="text-xs text-[var(--muted)] mt-0.5">
         End-of-shift inventory across {fmtInt(deviceCount)} devices

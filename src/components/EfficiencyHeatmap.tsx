@@ -32,7 +32,7 @@ export function EfficiencyHeatmap({ cells }: Props) {
   while (items.length < weeks * 7) items.push(null);
 
   return (
-    <div className="card p-5">
+    <div className="card p-4 sm:p-5">
       <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
         <div>
           <div className="text-sm font-semibold tracking-tight">
@@ -47,25 +47,28 @@ export function EfficiencyHeatmap({ cells }: Props) {
           {[10, 30, 50, 70, 90].map((p) => (
             <span
               key={p}
-              className="w-3.5 h-3.5 rounded-[3px]"
+              className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px]"
               style={{ background: cellColor(p) }}
             />
           ))}
           <span>High</span>
         </div>
       </div>
-      <div className="flex gap-3">
-        <div className="flex flex-col gap-1.5 text-[10px] text-[var(--muted)] pt-0.5">
+      <div className="flex gap-2 sm:gap-3 overflow-x-auto scroll-thin -mx-1 px-1">
+        <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] text-[var(--muted)] pt-0.5 shrink-0">
           {dayLabels.map((d) => (
-            <div key={d} className="h-5 leading-5">
+            <div
+              key={d}
+              className="h-4 sm:h-5 leading-4 sm:leading-5 w-7 sm:w-auto"
+            >
               {d}
             </div>
           ))}
         </div>
         <div
-          className="grid gap-1.5 flex-1"
+          className="grid gap-1 sm:gap-1.5 flex-1 min-w-0"
           style={{
-            gridTemplateColumns: `repeat(${weeks}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${weeks}, minmax(14px, 1fr))`,
             gridTemplateRows: "repeat(7, minmax(0, 1fr))",
             gridAutoFlow: "column",
           }}
@@ -73,14 +76,17 @@ export function EfficiencyHeatmap({ cells }: Props) {
           {items.map((cell, idx) => {
             if (!cell)
               return (
-                <div key={idx} className="h-5 rounded-[4px] bg-transparent" />
+                <div
+                  key={idx}
+                  className="h-4 sm:h-5 rounded-[4px] bg-transparent"
+                />
               );
             const date = parseISO(cell.date);
             return (
               <div
                 key={idx}
                 title={`${format(date, "EEE, dd MMM")} · ${fmtPct(cell.efficiency_pct)} · ${fmtHours(cell.good_hours)}`}
-                className="h-5 rounded-[4px] border border-black/[0.04] hover:ring-2 hover:ring-[var(--foreground)]/20 transition cursor-default"
+                className="h-4 sm:h-5 rounded-[4px] border border-black/[0.04] hover:ring-2 hover:ring-[var(--foreground)]/20 transition cursor-default"
                 style={{ background: cellColor(cell.efficiency_pct) }}
               />
             );

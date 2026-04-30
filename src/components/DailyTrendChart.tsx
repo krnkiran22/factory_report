@@ -31,8 +31,8 @@ export function DailyTrendChart({ trend }: Props) {
   }));
 
   return (
-    <div className="card p-5">
-      <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
+    <div className="card p-4 sm:p-5">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between flex-wrap gap-3 mb-3">
         <div>
           <div className="text-sm font-semibold tracking-tight">
             Last 7 days · combined trend
@@ -41,13 +41,13 @@ export function DailyTrendChart({ trend }: Props) {
             Stacked hours per day with overlaid efficiency line
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex">
           <Stat label="Total good" value={fmtHours(totalGood)} color="var(--good)" />
           <Stat label="Total idle" value={fmtHours(totalBad)} color="var(--bad)" />
           <Stat label="Avg efficiency" value={fmtPct(avgEff)} color="var(--accent)" />
         </div>
       </div>
-      <div className="h-72">
+      <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 4, right: 12, left: 0, bottom: 0 }}>
             <defs>
@@ -128,11 +128,12 @@ export function DailyTrendChart({ trend }: Props) {
 
 function Stat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-2 sm:px-3 min-w-0">
       <div className="text-[9px] uppercase tracking-wider text-[var(--muted)] flex items-center gap-1.5">
-        <span className="dot" style={{ background: color }} /> {label}
+        <span className="dot shrink-0" style={{ background: color }} />
+        <span className="truncate">{label}</span>
       </div>
-      <div className="kpi-value text-sm font-semibold mt-0.5">{value}</div>
+      <div className="kpi-value text-sm font-semibold mt-0.5 truncate">{value}</div>
     </div>
   );
 }

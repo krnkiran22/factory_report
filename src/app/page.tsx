@@ -58,13 +58,16 @@ export default async function Page({
   return (
     <>
       <Header date={date} factoryName={factory.recording_name} />
-      <main className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 py-6 space-y-6 flex-1">
+      <main
+        className="mx-auto max-w-[1440px] w-full px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 flex-1"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
+      >
         <Suspense>
           <Controls siteId={siteId} date={date} />
         </Suspense>
 
         {report ? (
-          <div id="print-root" className="space-y-6">
+          <div id="print-root" className="space-y-4 sm:space-y-6">
             <div data-pdf-section>
               <PrintHeader factory={factory} report={report} comparison={network} />
             </div>

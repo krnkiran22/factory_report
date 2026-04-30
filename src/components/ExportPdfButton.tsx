@@ -169,7 +169,9 @@ export function ExportPdfButton({ factoryName, date }: Props) {
       type="button"
       onClick={exportPdf}
       disabled={busy}
-      className="no-print inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold border border-[var(--border)] bg-[var(--foreground)] text-white hover:opacity-90 active:opacity-80 transition disabled:opacity-60"
+      aria-label="Export PDF"
+      className="no-print inline-flex items-center gap-1.5 sm:gap-2 rounded-full px-3 py-2 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-semibold border border-[var(--border)] bg-[var(--foreground)] text-white hover:opacity-90 active:opacity-80 transition disabled:opacity-60"
+      style={{ fontSize: "13px" }}
     >
       {busy ? (
         <>
@@ -177,7 +179,8 @@ export function ExportPdfButton({ factoryName, date }: Props) {
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.25" />
             <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           </svg>
-          Generating…
+          <span className="hidden sm:inline">Generating…</span>
+          <span className="sm:hidden">…</span>
         </>
       ) : (
         <>
@@ -196,7 +199,8 @@ export function ExportPdfButton({ factoryName, date }: Props) {
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Export PDF
+          <span className="hidden sm:inline">Export PDF</span>
+          <span className="sm:hidden">PDF</span>
         </>
       )}
     </button>

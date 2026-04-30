@@ -17,14 +17,14 @@ export function WorkerHistogram({ buckets }: Props) {
   /** Histogram of workers grouped by productivity %. Color-coded bars from red→green
    * make poor / excellent buckets readable at a glance. */
   return (
-    <div className="card p-5">
+    <div className="card p-4 sm:p-5">
       <div className="text-sm font-semibold tracking-tight">
         Worker productivity distribution
       </div>
       <div className="text-xs text-[var(--muted)] mt-0.5 mb-3">
         How workers are spread across productivity bands today
       </div>
-      <div className="h-48">
+      <div className="h-44 sm:h-48">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={buckets} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <XAxis

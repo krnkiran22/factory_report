@@ -77,24 +77,27 @@ export function KpiGrid({ report, kpis }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
       {tiles.map((t, i) => (
         <div
           key={i}
-          className="card p-4 hover:shadow-md transition-shadow flex flex-col"
+          className="card p-3 sm:p-4 hover:shadow-md transition-shadow flex flex-col min-w-0"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[var(--muted)]">
-              <span className="text-sm leading-none" style={{ color: t.sparkColor }}>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-[var(--muted)] min-w-0">
+              <span
+                className="text-sm leading-none shrink-0"
+                style={{ color: t.sparkColor }}
+              >
                 {t.icon}
               </span>
-              <span className="text-[10px] uppercase tracking-wider font-semibold">
+              <span className="text-[10px] uppercase tracking-wider font-semibold truncate">
                 {t.label}
               </span>
             </div>
             <DeltaChip delta={t.delta_pct} inverted={t.inverted} />
           </div>
-          <div className="kpi-value mt-2 text-2xl font-semibold tracking-tight">
+          <div className="kpi-value mt-1.5 sm:mt-2 text-xl sm:text-2xl font-semibold tracking-tight truncate">
             {t.value}
           </div>
           {t.sub && (
@@ -103,7 +106,7 @@ export function KpiGrid({ report, kpis }: Props) {
             </div>
           )}
           <div className="mt-2 -mx-1">
-            <Sparkline points={t.spark} color={t.sparkColor} height={32} />
+            <Sparkline points={t.spark} color={t.sparkColor} height={28} />
           </div>
         </div>
       ))}

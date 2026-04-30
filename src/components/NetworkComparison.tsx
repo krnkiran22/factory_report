@@ -11,7 +11,7 @@ export function NetworkComparisonCard({ comparison }: Props) {
   const avgWidth = top > 0 ? (comparison.network_avg_efficiency_pct / top) * 100 : 0;
 
   return (
-    <div className="card p-5 h-full">
+    <div className="card p-4 sm:p-5 h-full">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-sm font-semibold tracking-tight">

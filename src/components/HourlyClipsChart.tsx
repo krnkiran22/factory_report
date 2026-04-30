@@ -32,8 +32,8 @@ export function HourlyClipsChart({ hours }: Props) {
   }));
 
   return (
-    <div className="card p-5 h-full">
-      <div className="flex items-start justify-between flex-wrap gap-2">
+    <div className="card p-4 sm:p-5 h-full">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between flex-wrap gap-2 sm:gap-3">
         <div>
           <div className="text-sm font-semibold tracking-tight">
             Clips per hour
@@ -42,7 +42,7 @@ export function HourlyClipsChart({ hours }: Props) {
             Total uploaded vs passed quality
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-3 gap-2 text-center w-full sm:w-auto">
           <Pill label="Total" value={fmtInt(totals.total)} color="var(--info)" />
           <Pill label="Usable" value={fmtInt(totals.usable)} color="var(--good)" />
           <Pill
@@ -52,7 +52,7 @@ export function HourlyClipsChart({ hours }: Props) {
           />
         </div>
       </div>
-      <div className="h-48 mt-3">
+      <div className="h-44 sm:h-48 mt-3">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
             <defs>

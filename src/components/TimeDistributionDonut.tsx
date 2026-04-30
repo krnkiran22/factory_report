@@ -27,7 +27,7 @@ export function TimeDistributionDonut({ hours }: Props) {
   ];
 
   return (
-    <div className="card p-5 h-full">
+    <div className="card p-4 sm:p-5 h-full">
       <div className="text-sm font-semibold tracking-tight">Time spent</div>
       <div className="text-xs text-[var(--muted)] mt-0.5">
         Shift split into productive / idle / off minutes
