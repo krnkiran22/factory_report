@@ -9,7 +9,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-cheer-sagar-3",
     recording_name: "Cheer Sagar Export 3",
-    team: "Rudy",
+    team: "Zelantrix",
     partner_org: "Cheer Sagar",
     industry: "Garments",
     shift_hours: 10,
@@ -18,7 +18,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-cheer-sagar-2",
     recording_name: "Cheer Sagar Export-2",
-    team: "Mytron Labs",
+    team: "Zelantrix",
     partner_org: "Cheer Sagar",
     industry: "Garments",
     shift_hours: 10,
@@ -27,7 +27,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-igc",
     recording_name: "IGC",
-    team: "Avejn",
+    team: "Zelantrix",
     partner_org: "IGC Industries",
     industry: "Manufacturing",
     shift_hours: 10,
@@ -36,7 +36,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-infant-days-7",
     recording_name: "INFANT DAYS-7",
-    team: "Zeknitra",
+    team: "Zelantrix",
     partner_org: "Infant Group",
     industry: "Garments",
     shift_hours: 10,
@@ -45,7 +45,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-mlc-floor",
     recording_name: "MLC_FLOOR",
-    team: "Avejn",
+    team: "Zelantrix",
     partner_org: "MLC",
     industry: "Manufacturing",
     shift_hours: 10,
@@ -54,7 +54,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-nandhini-food",
     recording_name: "NANDHINI DAIRY (FOOD BLOCK)",
-    team: "Zeknitra",
+    team: "Zelantrix",
     partner_org: "Nandhini Dairy",
     industry: "Food Processing",
     shift_hours: 10,
@@ -63,7 +63,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-nandhini-milk-curd",
     recording_name: "NANDHINI DAIRY (MILK & CURD BLOCK)",
-    team: "Zeknitra",
+    team: "Zelantrix",
     partner_org: "Nandhini Dairy",
     industry: "Food Processing",
     shift_hours: 10,
@@ -72,7 +72,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-nandhini-trolley",
     recording_name: "NANDHINI DAIRY LTD (TROLLEY SECTION)",
-    team: "Zeknitra",
+    team: "Zelantrix",
     partner_org: "Nandhini Dairy",
     industry: "Food Processing",
     shift_hours: 10,
@@ -81,7 +81,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-1-floor-2",
     recording_name: "PUNIT CREATIONS UNIT-1 / FLOOR-2",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -90,7 +90,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-7-floor-ground",
     recording_name: "PUNIT CREATIONS UNIT-7 / FLOOR-GROUND",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -99,7 +99,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-8-floor-1",
     recording_name: "PUNIT CREATIONS UNIT-8 / FLOOR-1",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -108,7 +108,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-1-floor-1",
     recording_name: "PUNIT CREATIONS UNIT-1 / FLOOR-1",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -117,7 +117,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-1-floor-3",
     recording_name: "PUNIT CREATIONS UNIT-1 / FLOOR-3",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -126,7 +126,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-1-floor-ground",
     recording_name: "PUNIT CREATIONS UNIT-1 / FLOOR-GROUND",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -135,7 +135,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-7-floor-1",
     recording_name: "PUNIT CREATIONS UNIT-7 / FLOOR-1",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -144,7 +144,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-7-floor-2",
     recording_name: "PUNIT CREATIONS UNIT-7 / FLOOR-2",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
@@ -153,7 +153,7 @@ export const FACTORIES: Factory[] = [
   {
     site_id: "fac-pcu-7-floor-3",
     recording_name: "PUNIT CREATIONS UNIT-7 / FLOOR-3",
-    team: "Epcalt",
+    team: "Zelantrix",
     partner_org: "Punit Creations",
     industry: "Garments",
     shift_hours: 10,
