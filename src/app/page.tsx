@@ -9,6 +9,7 @@ import { HourlyClipsChart } from "@/components/HourlyClipsChart";
 import { HourlyEfficiencyChart } from "@/components/HourlyEfficiencyChart";
 import { KpiGrid } from "@/components/KpiGrid";
 import { NetworkComparisonCard } from "@/components/NetworkComparison";
+import { PrintHeader } from "@/components/PrintHeader";
 import { ShiftRhythmGauge } from "@/components/ShiftRhythmGauge";
 import { TimeDistributionDonut } from "@/components/TimeDistributionDonut";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -56,7 +57,7 @@ export default async function Page({
 
   return (
     <>
-      <Header date={date} />
+      <Header date={date} factoryName={factory.recording_name} />
       <main className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 py-6 space-y-6 flex-1">
         <Suspense>
           <Controls siteId={siteId} date={date} />
@@ -64,6 +65,8 @@ export default async function Page({
 
         {report ? (
           <>
+            <PrintHeader factory={factory} report={report} comparison={network} />
+
             <section id="overview">
               <HeroSection factory={factory} report={report} kpis={kpis} />
             </section>
@@ -131,7 +134,7 @@ export default async function Page({
           </div>
         )}
 
-        <footer className="pt-2 pb-8 text-xs text-[var(--muted)] text-center">
+        <footer className="pt-2 pb-8 text-xs text-[var(--muted)] text-center no-print">
           Standalone demo · all metrics mirror{" "}
           <code className="font-mono px-1 py-0.5 rounded bg-[var(--surface-muted)]">
             core/dal/product/report_v1
@@ -142,6 +145,10 @@ export default async function Page({
           </code>{" "}
           for live API
         </footer>
+
+        <div className="print-only mt-6 pt-3 border-t border-black/20 text-[9px] text-black/60 text-center tracking-wider uppercase">
+          Build AI · Factory Efficiency Report · Confidential
+        </div>
       </main>
     </>
   );

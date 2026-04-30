@@ -1,11 +1,12 @@
 import { format } from "date-fns";
+import { ExportPdfButton } from "./ExportPdfButton";
 
-type Props = { date: string };
+type Props = { date: string; factoryName: string };
 
-export function Header({ date }: Props) {
-  /** Top app bar: branded logo, breadcrumbs, and a date/status pill. */
+export function Header({ date, factoryName }: Props) {
+  /** Top app bar: branded logo, breadcrumbs, status pill, and PDF export CTA. */
   return (
-    <header className="sticky top-0 z-20 backdrop-blur-md bg-white/70 border-b border-[var(--border)]">
+    <header className="sticky top-0 z-20 backdrop-blur-md bg-white/70 border-b border-[var(--border)] no-print">
       <div className="mx-auto max-w-[1440px] px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <div className="h-9 w-9 rounded-xl grid place-items-center text-white font-bold text-sm tracking-tight"
@@ -42,11 +43,12 @@ export function Header({ date }: Props) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 text-xs text-[var(--muted)] bg-[var(--surface-muted)] border border-[var(--border)] rounded-full px-3 py-1.5">
+          <div className="hidden lg:flex items-center gap-2 text-xs text-[var(--muted)] bg-[var(--surface-muted)] border border-[var(--border)] rounded-full px-3 py-1.5">
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse-soft" />
-            Demo · {format(new Date(date), "dd MMM")}
+            {format(new Date(date), "dd MMM")}
           </div>
-          <div className="h-9 w-9 rounded-full bg-[var(--surface-muted)] border border-[var(--border)] grid place-items-center text-xs font-semibold">
+          <ExportPdfButton factoryName={factoryName} date={date} />
+          <div className="hidden sm:grid h-9 w-9 rounded-full bg-[var(--surface-muted)] border border-[var(--border)] place-items-center text-xs font-semibold">
             KK
           </div>
         </div>

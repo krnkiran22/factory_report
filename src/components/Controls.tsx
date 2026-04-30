@@ -26,7 +26,7 @@ export function Controls({ siteId, date }: Props) {
   }
 
   return (
-    <div className="card p-3 sm:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+    <div className="card p-3 sm:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center no-print">
       <div className="flex-1 min-w-0">
         <label className="block text-[10px] uppercase tracking-wider font-semibold text-[var(--muted)] mb-1">
           Factory
