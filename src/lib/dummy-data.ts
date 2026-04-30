@@ -57,29 +57,34 @@ function buildHourly(
   workerCount: number,
   totalGoodHours: number,
 ): HourBucket[] {
+  /** Build per-hour aggregated worker-minutes for the 10h shift.
+   * total worker-minutes per hour = workerCount * 60. Working share is the
+   * portion of that capacity actually capturing usable footage. */
   const baseShape = [0.55, 0.78, 0.86, 0.82, 0.45, 0.6, 0.74, 0.8, 0.7, 0.5];
   const noisy = baseShape.map((v) => Math.max(0.1, v + (rng() - 0.5) * 0.2));
   const sum = noisy.reduce((s, v) => s + v, 0);
   const normalized = noisy.map((v) => v / sum);
   const buckets: HourBucket[] = [];
+  const totalCapacityMinutes = Math.max(1, workerCount) * 60;
   for (let i = 0; i < SHIFT_HOURS; i++) {
     const hourGoodHours = totalGoodHours * normalized[i];
-    const goodMinutes = hourGoodHours * 60;
-    const offMinutes = pickRange(rng, 1, 8);
-    const badMinutes = Math.max(0, 60 - goodMinutes - offMinutes);
-    const totalMinutes = goodMinutes + badMinutes + offMinutes;
+    const workingMinutes = Math.min(hourGoodHours * 60, totalCapacityMinutes);
+    const remaining = Math.max(0, totalCapacityMinutes - workingMinutes);
+    const offShare = pickRange(rng, 0.06, 0.18);
+    const offMinutes = remaining * offShare;
+    const idleMinutes = remaining - offMinutes;
     const hourClock = SHIFT_START_HOUR + i;
     const label = `${String(hourClock).padStart(2, "0")}:00`;
-    const clipCount = Math.round(hourGoodHours / CLIP_DURATION_HOURS / Math.max(1, workerCount) * workerCount * pickRange(rng, 1.6, 2.2));
     const usableClipCount = Math.round(hourGoodHours / CLIP_DURATION_HOURS);
+    const clipCount = Math.round(usableClipCount * pickRange(rng, 1.18, 1.45));
     buckets.push({
       hour_index: i,
       hour_label: label,
-      working_pct: round2((goodMinutes / totalMinutes) * 100),
-      not_working_pct: round2((badMinutes / totalMinutes) * 100),
-      device_off_pct: round2((offMinutes / totalMinutes) * 100),
-      good_minutes: round2(goodMinutes),
-      bad_minutes: round2(badMinutes),
+      working_pct: round2((workingMinutes / totalCapacityMinutes) * 100),
+      not_working_pct: round2((idleMinutes / totalCapacityMinutes) * 100),
+      device_off_pct: round2((offMinutes / totalCapacityMinutes) * 100),
+      good_minutes: round2(workingMinutes),
+      bad_minutes: round2(idleMinutes),
       off_minutes: round2(offMinutes),
       clip_count: clipCount,
       usable_clip_count: usableClipCount,

@@ -157,32 +157,50 @@ body {
   animation: shimmer 1.6s infinite linear;
 }
 
-/* ===== Print / PDF export ===== */
-@page {
-  size: A4;
-  margin: 14mm 10mm;
+/* ===== PDF export ===== */
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
 }
 
-@media print {
-  :root {
-    --background: #ffffff;
-    --surface: #ffffff;
-    --surface-muted: #f5f5f3;
-    --border: #d6d4cf;
-    --shadow-sm: none;
-    --shadow-md: none;
-    --shadow-lg: none;
-  }
+/* When the body has `is-exporting`, html2canvas-pro is taking screenshots.
+   Hide screen chrome and reveal the print cover so each captured section
+   matches what we want in the PDF. */
+body.is-exporting {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+body.is-exporting .no-print {
+  display: none !important;
+}
+body.is-exporting .print-only {
+  display: block !important;
+}
+body.is-exporting .card,
+body.is-exporting .card-elevated,
+body.is-exporting .card-hero {
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+body.is-exporting [data-pdf-section] {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
 
+/* Native browser print fallback (Cmd-P) — keeps things sane if used. */
+@page {
+  size: A4;
+  margin: 12mm 10mm;
+}
+@media print {
   html,
   body {
     background: #ffffff !important;
     background-image: none !important;
     color: #0d0d0c !important;
-    font-size: 10.5px;
   }
-
-  /* Force chart colors and gradients to render in print */
   *,
   *::before,
   *::after {
@@ -190,87 +208,20 @@ body {
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
-
-  /* Hide screen-only chrome */
-  .no-print,
-  header.sticky,
-  header[class*="sticky"] {
+  .no-print {
     display: none !important;
   }
-
-  main {
-    max-width: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  .print-only {
+    display: block !important;
   }
-
-  /* Cards: flat for print, no shadows or extra rounding */
   .card,
   .card-elevated,
   .card-hero {
     box-shadow: none !important;
-    border: 1px solid #d6d4cf !important;
-    border-radius: 10px !important;
-    background: #ffffff !important;
+  }
+  section,
+  [data-pdf-section] {
     break-inside: avoid;
     page-break-inside: avoid;
-  }
-
-  section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-bottom: 12px !important;
-  }
-
-  /* Keep hero on first page; allow page breaks before later sections so we
-     don't try to cram everything into one page */
-  section#hourly,
-  section#trends,
-  section#workers {
-    break-before: auto;
-    page-break-before: auto;
-  }
-
-  h1 {
-    font-size: 18px !important;
-  }
-  h2 {
-    font-size: 13px !important;
-  }
-
-  /* Tighten KPI tiles and tables in print */
-  .kpi-value {
-    letter-spacing: -0.02em;
-  }
-
-  table {
-    font-size: 9.5px !important;
-  }
-  thead th {
-    background: #f5f5f3 !important;
-  }
-
-  /* Recharts SVG: keep at full container width */
-  .recharts-responsive-container {
-    width: 100% !important;
-  }
-  .recharts-wrapper svg {
-    overflow: visible !important;
-  }
-
-  /* Cleaner backgrounds */
-  body {
-    background: #ffffff !important;
-  }
-
-  /* Force print header visible */
-  .print-only {
-    display: block !important;
-  }
-}
-
-@media screen {
-  .print-only {
-    display: none !important;
   }
 }

@@ -64,14 +64,16 @@ export default async function Page({
         </Suspense>
 
         {report ? (
-          <>
-            <PrintHeader factory={factory} report={report} comparison={network} />
+          <div id="print-root" className="space-y-6">
+            <div data-pdf-section>
+              <PrintHeader factory={factory} report={report} comparison={network} />
+            </div>
 
-            <section id="overview">
+            <section id="overview" data-pdf-section>
               <HeroSection factory={factory} report={report} kpis={kpis} />
             </section>
 
-            <section>
+            <section data-pdf-section>
               <SectionTitle
                 eyebrow="Snapshot"
                 title="Today's metrics"
@@ -86,22 +88,32 @@ export default async function Page({
                 title="Hour-by-hour shift breakdown"
                 description="The 10-hour shift sliced into hourly working / idle / device-off shares with overlaid quality."
               />
-              <HourlyEfficiencyChart hours={report.hourly_activity} goodHours={report.good_hours} />
+              <div data-pdf-section>
+                <HourlyEfficiencyChart hours={report.hourly_activity} goodHours={report.good_hours} />
+              </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2" data-pdf-section>
                   <HourlyClipsChart hours={report.hourly_activity} />
                 </div>
-                <TimeDistributionDonut hours={report.hourly_activity} />
+                <div data-pdf-section>
+                  <TimeDistributionDonut hours={report.hourly_activity} />
+                </div>
               </div>
             </section>
 
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-              <NetworkComparisonCard comparison={network} />
-              <ShiftRhythmGauge rhythm={rhythm} />
-              <CardInventoryPanel
-                inventory={report.card_inventory}
-                deviceCount={report.device_count}
-              />
+              <div data-pdf-section>
+                <NetworkComparisonCard comparison={network} />
+              </div>
+              <div data-pdf-section>
+                <ShiftRhythmGauge rhythm={rhythm} />
+              </div>
+              <div data-pdf-section>
+                <CardInventoryPanel
+                  inventory={report.card_inventory}
+                  deviceCount={report.device_count}
+                />
+              </div>
             </section>
 
             <section id="trends" className="space-y-3">
@@ -110,8 +122,12 @@ export default async function Page({
                 title="Recent trends"
                 description="Past week and past month at a glance."
               />
-              <DailyTrendChart trend={trend} />
-              <EfficiencyHeatmap cells={heatmap} />
+              <div data-pdf-section>
+                <DailyTrendChart trend={trend} />
+              </div>
+              <div data-pdf-section>
+                <EfficiencyHeatmap cells={heatmap} />
+              </div>
             </section>
 
             <section id="workers" className="space-y-3">
@@ -121,13 +137,19 @@ export default async function Page({
                 description="Distribution of productivity bands and the leaderboard for the day."
               />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                <WorkerHistogram buckets={histogram} />
-                <div className="lg:col-span-2">
+                <div data-pdf-section>
+                  <WorkerHistogram buckets={histogram} />
+                </div>
+                <div className="lg:col-span-2" data-pdf-section>
                   <WorkersTable workers={report.workers} />
                 </div>
               </div>
             </section>
-          </>
+
+            <div data-pdf-section className="print-only mt-2 pt-3 border-t border-black/20 text-[9px] text-black/60 text-center tracking-wider uppercase">
+              Build AI · Factory Efficiency Report · Confidential
+            </div>
+          </div>
         ) : (
           <div className="card p-8 text-center text-[var(--muted)]">
             No data for the selected factory and date.
@@ -145,10 +167,6 @@ export default async function Page({
           </code>{" "}
           for live API
         </footer>
-
-        <div className="print-only mt-6 pt-3 border-t border-black/20 text-[9px] text-black/60 text-center tracking-wider uppercase">
-          Build AI · Factory Efficiency Report · Confidential
-        </div>
       </main>
     </>
   );
