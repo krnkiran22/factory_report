@@ -86,11 +86,13 @@ export default async function Page({
             </section>
 
             <section id="hourly" className="space-y-3">
-              <SectionTitle
-                eyebrow="Hourly"
-                title="Hour-by-hour shift breakdown"
-                description="The 10-hour shift sliced into hourly working / idle / device-off shares with overlaid quality."
-              />
+              <div data-pdf-section>
+                <SectionTitle
+                  eyebrow="Hourly"
+                  title="Hour-by-hour shift breakdown"
+                  description="The 10-hour shift sliced into hourly working / idle / device-off shares with overlaid quality."
+                />
+              </div>
               <div data-pdf-section>
                 <HourlyEfficiencyChart hours={report.hourly_activity} goodHours={report.good_hours} />
               </div>
@@ -120,11 +122,13 @@ export default async function Page({
             </section>
 
             <section id="trends" className="space-y-3">
-              <SectionTitle
-                eyebrow="History"
-                title="Recent trends"
-                description="Past week and past month at a glance."
-              />
+              <div data-pdf-section>
+                <SectionTitle
+                  eyebrow="History"
+                  title="Recent trends"
+                  description="Past week and past month at a glance."
+                />
+              </div>
               <div data-pdf-section>
                 <DailyTrendChart trend={trend} />
               </div>
@@ -134,11 +138,13 @@ export default async function Page({
             </section>
 
             <section id="workers" className="space-y-3">
-              <SectionTitle
-                eyebrow="People"
-                title="Worker performance"
-                description="Distribution of productivity bands and the leaderboard for the day."
-              />
+              <div data-pdf-section>
+                <SectionTitle
+                  eyebrow="People"
+                  title="Worker performance"
+                  description="Distribution of productivity bands and the leaderboard for the day."
+                />
+              </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                 <div data-pdf-section>
                   <WorkerHistogram buckets={histogram} />
@@ -148,10 +154,6 @@ export default async function Page({
                 </div>
               </div>
             </section>
-
-            <div data-pdf-section className="print-only mt-2 pt-3 border-t border-black/20 text-[9px] text-black/60 text-center tracking-wider uppercase">
-              Build AI · Factory Efficiency Report · Confidential
-            </div>
           </div>
         ) : (
           <div className="card p-8 text-center text-[var(--muted)]">

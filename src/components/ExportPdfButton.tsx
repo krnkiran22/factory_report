@@ -146,6 +146,12 @@ export function ExportPdfButton({ factoryName, date }: Props) {
           PAGE_H_MM - 4,
         );
         pdf.text(
+          "Build AI · Confidential",
+          PAGE_W_MM / 2,
+          PAGE_H_MM - 4,
+          { align: "center" },
+        );
+        pdf.text(
           `Page ${p} of ${pageCount}`,
           PAGE_W_MM - MARGIN_MM,
           PAGE_H_MM - 4,
