@@ -21,16 +21,18 @@ export function TimeDistributionDonut({ hours }: Props) {
   );
   const total = totals.working + totals.idle + totals.off || 1;
   const slices = [
-    { name: "Working", value: totals.working, color: "var(--good)" },
+    { name: "Productive", value: totals.working, color: "var(--good)" },
     { name: "Idle", value: totals.idle, color: "var(--bad)" },
     { name: "Device off", value: totals.off, color: "var(--off)" },
   ];
 
   return (
     <div className="card p-4 sm:p-5 h-full">
-      <div className="text-sm font-semibold tracking-tight">Time spent</div>
+      <div className="text-sm font-semibold tracking-tight">
+        Where the day went
+      </div>
       <div className="text-xs text-[var(--muted)] mt-0.5">
-        Shift split into productive / idle / off minutes
+        Total worker-minutes split by productive, idle, and device-off time
       </div>
       <div className="grid grid-cols-2 gap-4 mt-4 items-center">
         <div className="relative h-40">
@@ -53,7 +55,7 @@ export function TimeDistributionDonut({ hours }: Props) {
           <div className="absolute inset-0 grid place-items-center pointer-events-none">
             <div className="text-center">
               <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
-                Working
+                Productive
               </div>
               <div className="kpi-value text-xl font-semibold">
                 {Math.round((totals.working / total) * 100)}%

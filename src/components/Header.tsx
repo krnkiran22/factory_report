@@ -33,7 +33,7 @@ export function Header({ date, factoryName }: Props) {
         </div>
 
         <nav className="hidden md:flex items-center gap-1 bg-[var(--surface-muted)] rounded-full p-1 border border-[var(--border)]">
-          {["Overview", "Hourly", "Workers", "Inventory", "Trends"].map((t, i) => (
+          {["Overview", "Hourly", "Trends", "Workers"].map((t, i) => (
             <a
               key={t}
               href={`#${t.toLowerCase()}`}

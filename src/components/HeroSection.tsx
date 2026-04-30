@@ -41,13 +41,13 @@ export function HeroSection({ factory, report, kpis }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-5 sm:mt-6">
             <Flagship
-              label="Good hours"
+              label="Productive hours"
               value={fmtHours(report.good_hours)}
               delta={kpis.good_hours.delta_pct}
               color="var(--good)"
             />
             <Flagship
-              label="Idle hours"
+              label="Idle time"
               value={fmtHours(report.bad_hours)}
               delta={kpis.bad_hours.delta_pct}
               color="var(--bad)"

@@ -1,18 +1,21 @@
 import { format, parseISO } from "date-fns";
-import type { Factory, FactoryDayReport, NetworkComparison } from "@/lib/types";
+import type { Factory, FactoryDayReport } from "@/lib/types";
 import { fmtHours, fmtInt, fmtPct, efficiencyTier } from "@/lib/format";
+
+const TARGET_HOURS_PER_WORKER = 7;
 
 type Props = {
   factory: Factory;
   report: FactoryDayReport;
-  comparison: NetworkComparison;
 };
 
-export function PrintHeader({ factory, report, comparison }: Props) {
+export function PrintHeader({ factory, report }: Props) {
   /** Hidden on screen, shown only when printing. Establishes the document
-   * cover with branding, factory identity, key totals and rank for context. */
+   * cover with the factory identity and the headline owner-facing totals. */
   const tier = efficiencyTier(report.quality_pct);
   const generatedAt = format(new Date(), "dd MMM yyyy · HH:mm");
+  const attainment =
+    (report.good_hours_per_participant / TARGET_HOURS_PER_WORKER) * 100;
 
   return (
     <div className="print-only mb-6">
@@ -60,21 +63,19 @@ export function PrintHeader({ factory, report, comparison }: Props) {
               note={tier.label}
             />
             <Item
-              label="Network rank"
-              value={`#${comparison.rank} / ${comparison.total}`}
-              note={`avg ${fmtPct(comparison.network_avg_efficiency_pct)}`}
+              label="Target attainment"
+              value={fmtPct(attainment)}
+              note={`goal ${fmtHours(TARGET_HOURS_PER_WORKER)} / worker`}
             />
-            <Item label="Good hours" value={fmtHours(report.good_hours)} />
+            <Item label="Productive hours" value={fmtHours(report.good_hours)} />
             <Item label="Idle hours" value={fmtHours(report.bad_hours)} />
             <Item
-              label="Workers"
+              label="Workers active"
               value={fmtInt(report.participant_count)}
-              note={`${fmtInt(report.device_count)} devices`}
             />
             <Item
-              label="SD cards"
-              value={fmtInt(report.total_sd_card_count)}
-              note={`${fmtInt(report.card_inventory.good_card_count)} good`}
+              label="Hours / worker"
+              value={fmtHours(report.good_hours_per_participant)}
             />
           </div>
         </div>

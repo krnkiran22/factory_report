@@ -25,8 +25,8 @@ export function DailyTrendChart({ trend }: Props) {
   const avgEff = trend.reduce((s, d) => s + d.quality_pct, 0) / Math.max(1, trend.length);
   const data = trend.map((d) => ({
     label: format(parseISO(d.date), "EEE dd"),
-    Good: d.good_hours,
-    Bad: d.bad_hours,
+    Productive: d.good_hours,
+    Idle: d.bad_hours,
     Efficiency: d.quality_pct,
   }));
 
@@ -42,8 +42,8 @@ export function DailyTrendChart({ trend }: Props) {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex">
-          <Stat label="Total good" value={fmtHours(totalGood)} color="var(--good)" />
-          <Stat label="Total idle" value={fmtHours(totalBad)} color="var(--bad)" />
+          <Stat label="Productive" value={fmtHours(totalGood)} color="var(--good)" />
+          <Stat label="Idle" value={fmtHours(totalBad)} color="var(--bad)" />
           <Stat label="Avg efficiency" value={fmtPct(avgEff)} color="var(--accent)" />
         </div>
       </div>
@@ -94,10 +94,10 @@ export function DailyTrendChart({ trend }: Props) {
                 fontSize: 12,
               }}
             />
-            <Bar yAxisId="hours" dataKey="Good" stackId="b" fill="var(--good)" />
+            <Bar yAxisId="hours" dataKey="Productive" stackId="b" fill="var(--good)" />
             <Bar
               yAxisId="hours"
-              dataKey="Bad"
+              dataKey="Idle"
               stackId="b"
               fill="var(--bad)"
               radius={[6, 6, 0, 0]}
